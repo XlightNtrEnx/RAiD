@@ -7,23 +7,23 @@ import { Routes, Route } from "react-router-dom";
 import Cookies from "js-cookie";
 
 export default function App() {
-
-  return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<HomePage />}>
-          <Route path="keypress" element={<KeypressPage />} />
-          <Route path="opslog" element={<OpslogPage />} />
-          <Route
-          path="*"
-          element={
-          <main style={{ padding: "1rem" }}>
-            <p>There's nothing here!</p>
-          </main>
-          }
-          />
-        </Route>
-      </Routes>
-    </div>
-  );
+    return (
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />}>
+            <Route path="keypress" element={<KeypressPage />} />
+            <Route path="opslog" element={<OpslogPage />} />
+            <Route
+            path="*"
+            element={
+            <main style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </main>
+            }
+            />
+          </Route>
+          <Route path="login" element={<LoginPage />} />
+        </Routes>
+      </div>
+    );
 }

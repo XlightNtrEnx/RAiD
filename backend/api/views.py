@@ -1,4 +1,4 @@
-from unicodedata import name
+from urllib import response
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -9,6 +9,12 @@ from rest_framework.reverse import reverse
 from rest_framework import viewsets, status
 from django.db.models import F, Value
 from django.db.models.functions import Concat
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse, HttpResponseRedirect
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST, require_GET
+import json
 
 # Create your views here.
 def index(request):
@@ -21,6 +27,45 @@ def api_root(request, format=None):
         'opslogrecords': reverse('opslogrecords-list', request=request, format=format)
     })
 
+@require_POST
+def login_view(request):
+    data = json.loads(request.body)
+    username = data.get('username')
+    password = data.get('password')
+
+    if username is None or password is None:
+        return JsonResponse({'detail': 'Please provide username and password.'}, status=400)
+
+    user = authenticate(username=username, password=password)
+
+    if user is None:
+        return JsonResponse({'detail': 'Invalid credentials.'}, status=400)
+
+    login(request, user)
+    response = redirect('/')
+    return response
+
+@require_GET
+def logout_view(request):
+    print("hello")
+    if not request.user.is_authenticated:
+        return JsonResponse({'detail': 'You\'re not logged in.'}, status=400)
+
+    logout(request)
+    return redirect('/login')
+
+@ensure_csrf_cookie
+def session_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': False})
+
+    return JsonResponse({'isAuthenticated': True})
+
+def whoami_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': False})
+
+    return JsonResponse({'full_name': request.user.last_name + request.user.first_name })
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """

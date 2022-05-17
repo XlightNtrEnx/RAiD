@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import Cookies from "js-cookie";
 
 export default function Opslog() {
+    const { handleSubmit, register, control } = useForm();
+    const onError = (errors, e) => console.log(errors, e);
 
     function retrieveAllOpslogRecords() {
         const data = fetch('/api/opslogrecords').then(response => response.json()).then(data => convertAllDateTimesToLocaleString(data));
@@ -18,17 +20,30 @@ export default function Opslog() {
         return data
     }
 
-    const { handleSubmit, register } = useForm();
-    const onError = (errors, e) => console.log(errors, e);
     function onSubmit(data, e) {
-        fetch(
-            '/api/opslogrecords/', 
-            { method: 'POST',
-              body: JSON.stringify(data),
-              headers: {'Content-Type': 'application/json',
-                        'X-CSRFToken': Cookies.get("csrftoken")}}
-        ).then(response => response.json()).then(() => window.alert(JSON.stringify(data))).then(() => window.location.reload());
+        console.log(data.event.value)
+        if (data.event.value === undefined) {
+            window.alert("No empty events!")
+        } else {
+            fetch(
+                '/api/opslogrecords/', 
+                { method: 'POST',
+                  body: JSON.stringify(data),
+                  headers: {'Content-Type': 'application/json',
+                            'X-CSRFToken': Cookies.get("csrftoken")}}
+            ).then(response => response.json())
+            .then(() => window.alert(JSON.stringify(data.event.value)))
+            .then(() => window.location.reload())
+        }
+    }
 
+    function Child({ control }) {
+        const event = useWatch({
+            control,
+            name: "event",
+            defaultValue: "",
+        });
+        return <span>{event.length}</span>;
     }
 
     return (
@@ -42,11 +57,12 @@ export default function Opslog() {
             </Table>
             <form onSubmit={handleSubmit(onSubmit, onError)}>
                 <TextField
-                    multiline = {true}
+                    placeholder="Record down an event"
                     fullWidth = {true}
                     inputProps = {register("event")}
                 >
                 </TextField>
+                <Child control={control}/>
                 <Button type="submit">Submit</Button>
             </form>
         </div>

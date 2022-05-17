@@ -1,7 +1,7 @@
 from multiprocessing import Event
-from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import OpslogRecord
+from .models import *
+from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     opslogrecords = serializers.PrimaryKeyRelatedField(many=True, queryset=OpslogRecord.objects.all())

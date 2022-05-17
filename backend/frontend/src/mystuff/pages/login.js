@@ -13,19 +13,26 @@ export default class LoginPage extends React.Component {
 }
 
 function LoginForm() {
-    const { register, formState: { errors } } = useForm();
-
+    const { handleSubmit, register} = useForm();
+    const onError = (errors, e) => console.log(errors, e);
+    function onSubmit(data, e) {
+        fetch(
+            '/api/login/', 
+            { method: 'POST',
+              body: JSON.stringify(data),
+              headers: {'Content-Type': 'application/json',
+                        'X-CSRFToken': Cookies.get("csrftoken"),}}).then(response => {if (response.redirected) {
+                            window.location.href = response.url;
+                        }})
+    }
     return (
-        <form action="/api/auth/login/" method="post">
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
             <label htmlFor="username">Username</label>
             <input id="username" {...register('username', { required: true, maxLength: 30 })} />
-            {errors.name && errors.name.type === "required" && <span>This is required</span>}
-            {errors.name && errors.name.type === "maxLength" && <span>Max length exceeded</span> }
             <br></br>
             <label htmlFor="password">Password</label>
-            <input id="password" {...register('password', { required: true, maxLength: 30 })} />
-            {errors.name && errors.name.type === "required" && <span>This is required</span>}
-            {errors.name && errors.name.type === "maxLength" && <span>Max length exceeded</span> }
+            <input type="password" id="password" {...register('password', { required: true, maxLength: 30 })} />
+            <br></br>
             <input type="hidden" name="csrfmiddlewaretoken" value={Cookies.get("csrftoken")} /> 
             <input type="submit" />
         </form>
