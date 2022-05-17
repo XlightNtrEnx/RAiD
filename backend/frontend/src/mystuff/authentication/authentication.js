@@ -15,7 +15,6 @@ export default function RenderIfAuth(props) {
                 window.location.href = "/login"
             } 
         })
-        //.then(result => setIsAuthenticated(result))
     }
 
     useEffect(() => ifAuthenticatedSetStringTrue());

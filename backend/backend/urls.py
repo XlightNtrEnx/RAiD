@@ -19,8 +19,9 @@ from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    
     path('api/', include("api.urls")),
-    #re_path(r"^.*$", views.index),
+
     path('', views.index),
     path('login/', views.index),
     path('keypress/', views.index),
