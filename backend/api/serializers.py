@@ -17,5 +17,17 @@ class OpslogRecordSerializer(serializers.ModelSerializer):
         model = OpslogRecord
         fields = ['id', 'created', 'event', 'owner', 'full_name']
 
+class KeyRecordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = KeyRecord
+        fields = ['id', 'created', 'returning_or_not', 'borrowing_person', 'key']
+
+class KeySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Key
+        fields = ['code', 'name', 'available_for_loan']
+
 
     

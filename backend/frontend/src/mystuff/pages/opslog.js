@@ -21,8 +21,8 @@ export default function Opslog() {
     }
 
     function onSubmit(data, e) {
-        console.log(data.event.value)
-        if (data.event.value === undefined) {
+        console.log(data.event);
+        if (data.event === "") {
             window.alert("No empty events!")
         } else {
             fetch(
@@ -32,12 +32,12 @@ export default function Opslog() {
                   headers: {'Content-Type': 'application/json',
                             'X-CSRFToken': Cookies.get("csrftoken")}}
             ).then(response => response.json())
-            .then(() => window.alert(JSON.stringify(data.event.value)))
+            .then(() => window.alert(JSON.stringify(data.event)))
             .then(() => window.location.reload())
         }
     }
 
-    function Child({ control }) {
+    function DynamicallyChangingText({ control }) {
         const event = useWatch({
             control,
             name: "event",
@@ -48,7 +48,7 @@ export default function Opslog() {
 
     return (
         <div className='Opslog' class="center">
-            <h1>Remember to record significant events!</h1>
+            <h1>Remember to record significant events! </h1>
             <Table
             headers = {["Created", "Event", "Author"]}
             dataFetcher = {retrieveAllOpslogRecords}
@@ -62,7 +62,7 @@ export default function Opslog() {
                     inputProps = {register("event")}
                 >
                 </TextField>
-                <Child control={control}/>
+                <DynamicallyChangingText control={control}/>
                 <Button type="submit">Submit</Button>
             </form>
         </div>

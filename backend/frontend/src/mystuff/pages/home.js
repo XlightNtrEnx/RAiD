@@ -1,9 +1,11 @@
-import { experimentalStyled, paperClasses } from '@mui/material';
-import React, { useState, useEffect } from 'react';
-import { Link, Outlet, NavLink, Navigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { set } from 'react-hook-form';
+import { Link, Outlet } from "react-router-dom";
+import RenderIfAuth, { obtainName } from '../authentication/authentication.js'; 
 
 export default function HomePage() {
-
+    const [fullName, setFullName] = useState("");
+    useEffect(() => obtainName(setFullName));
     function LayOut(props) {
         return (
             <div className='Home'>
@@ -14,33 +16,12 @@ export default function HomePage() {
             }} >
                 <Link to="/keypress">Keypress</Link> |{" "}
                 <Link to="/opslog">Opslog</Link> |{" "}
-                <Link to="/api/logout" reloadDocument={true}>Logout</Link> |
+                <Link to="/api/logout" reloadDocument={true}>Logout</Link> |{" "}
+                <h1>Hello {fullName}</h1>
             </nav>
             <Outlet>
                 <h1>Welcome to 508 SQN!</h1>
             </Outlet>
-            </div>
-        )
-    }
-    
-    function RenderIfAuth(props) {
-
-        const [isAuthenticated, setIsAuthenticated] = useState("Authenticating");
-        
-        function ifAuthenticatedSetStringTrue() {
-            fetch('/api/session')
-            .then(response => response.json())
-            .then(data => data["isAuthenticated"])
-            .then(result => result.toString())
-            .then(stringResult => setIsAuthenticated(stringResult))
-            //.then(result => setIsAuthenticated(result))
-        }
-
-        useEffect(() => ifAuthenticatedSetStringTrue());
-
-        return (
-            <div className={isAuthenticated}>
-                {isAuthenticated == "true" && <div>{props.element()}</div>}
             </div>
         )
     }
